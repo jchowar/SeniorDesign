@@ -1,2 +1,10 @@
 # SeniorDesign
 Clemson Senior Design Team 4 S22
+
+Autonomous navigation of a small robot through a modular 3x3 grid based maze using computer vision and IMU data measurements.
+
+The robot consists of a Raspberry Pi 3, a motor hat, two DC motors, and an IMU. It is assembled using a 3 layer chasis kit with two wheels in the back and a ball bearing in the front for turning in place
+
+mazeAlgo.py runs on a seperate computer connected to a USB webcam and uses the OpenCV library and color detection to identify objects of interest. The walls are red, the columns are blue, the destination is indicated by a yellow triangle or cheese, and on the top of the robot is a green triangle. Once all objects have been identified a recursive algorithm determines the shortest path from the robot to the cheese if one is present. The determined path is then sent to the Raspberry Pi controlling the robot using a Bluetooth connection and the pySerial library. After each movement an updated picture is taken to determine if the robot is traveling the correct direction and distance. If any corrections are needed they are then sent to the RP, this loop is repeated until the robot reaches the destination.
+
+mazeRun.py runs on the Raspberry Pi controlling the robot. It waits until receiving the inital instructions, then after receiving all instructions it turns if necessary and makes the first move. While turning, the IMU gyrocope measurements are frequently polled and used to calculate how far the robot has turned. Once it has turned the correct distance the motor throttles are set to 0. During lateal movements the accelerometer data is used in a similar fashion to calculate the total distance traveled. The desired distance for each movement is about 7 in, or the distance between the centroids of two adjacent maze quadrants. After each movement an acknowledgement is sent to the host computer so it can determine if any corrections need to be made. This process repeats until the robot reaches the destination. 
